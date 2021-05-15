@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/vhoyer/lgpd-cookie-consent-banner/issues"
   },
-  "homepage": "https://github.com/vhoyer/lgpd-cookie-consent-banner#readme"
+  "homepage": "https://github.com/vhoyer/lgpd-cookie-consent-banner#readme",
+  "dependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
 }
