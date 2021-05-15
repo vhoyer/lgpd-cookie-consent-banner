@@ -1,26 +1,6 @@
-function Cookies() {
-  this.all = () => document.cookie.split(';').map(s => s.trim());
+import { Cookies } from './cookies';
 
-  this.get = (name) => {
-    const selected = this.all().find(row => row.startsWith(`${name}=`));
-    if (!selected) return;
-    return selected.split('=')[1];
-  }
-
-  this.set = (name, value) => {
-    const newCookie = `${name}=${value}`;
-    const rest = this.all().filter(row => !row.startsWith(`${name}=`));
-
-    const newString = [
-      newCookie,
-      ...rest,
-    ].join('; ');
-
-    document.cookie = newString;
-  }
-}
-
-class LgpdCookieConsentBanner extends HTMLElement {
+export class LgpdCookieConsentBanner extends HTMLElement {
   constructor() {
     super();
 
@@ -31,17 +11,23 @@ class LgpdCookieConsentBanner extends HTMLElement {
     this.template = `
     <style>
       .banner {
+        --inner-margin: var(--banner-margin, 1rem);
+        --inner-color-primary: var(--banner-color-primary, #2c7644);
+        --inner-color-primary-hover: var(--banner-color-primary-hover, #111111);
+        --inner-z-index: var(--banner-z-index, 9999);
+        box-sizing: border-box;
         position: fixed;
         bottom: 0;
         left: 0;
-        width: 100%;
-        max-width: 20rem;
-        padding: 1em;
-        margin-left: 1em;
-        margin-bottom: 1em;
+        width: 22rem;
+        max-width: calc(100% - 2 * var(--inner-margin));
+        padding: 1rem;
+        margin-left: var(--inner-margin);
+        margin-bottom: var(--inner-margin);
         border: 1px solid #ebebeb;
         background-color: #f9f9f9;
         box-shadow: 0 0 5px 0px #d9d9d9;
+        z-index: var(--inner-z-index);
       }
 
       .banner__text {
@@ -55,7 +41,7 @@ class LgpdCookieConsentBanner extends HTMLElement {
         font-family: inherit;
         font-size: 11px;
         color: #fff;
-        background-color: #2c7644;
+        background-color: var(--inner-color-primary);
         text-transform: uppercase;
         text-align: center;
         font-weight: 600;
@@ -66,7 +52,7 @@ class LgpdCookieConsentBanner extends HTMLElement {
       }
 
       .banner__action:hover {
-        background-color: #111111;
+        background-color: var(--inner-color-primary-hover);
       }
     </style>
 
@@ -84,15 +70,16 @@ class LgpdCookieConsentBanner extends HTMLElement {
   connectedCallback() {
     if (this.cookies.get(this.name)) return;
 
-    this.innerHTML = this.template;
-    this.querySelector('.banner__action').addEventListener('click', () => {
+    const shadow = this.attachShadow({mode: 'open'})
+    shadow.innerHTML = this.template;
+
+    shadow.querySelector('.banner__action').addEventListener('click', () => {
       this.cookies.set(this.name, true);
       this.innerHTML = '';
     });
   }
 }
 
-customElements.define('lgpd-cookie-consent-banner', LgpdCookieConsentBanner)
-
-document.currentScript
-  .insertAdjacentHTML('beforebegin', '<lgpd-cookie-consent-banner></lgpd-cookie-consent-banner>')
+if (typeof window !== 'undefined') {
+  customElements.define('lgpd-cookie-consent-banner', LgpdCookieConsentBanner)
+}
