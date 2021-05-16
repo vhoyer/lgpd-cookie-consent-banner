@@ -1,15 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <h1>test</h1>
-  <button class="banner__action">bla</button>
+  <head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <h1>test</h1>
+    <script>
+      function deleteAllCookies() {
+              var cookies = document.cookie.split(";");
 
-  <script src="./index.js"></script>
-  <lgpd-cookie-consent-banner style="--banner-z-index: 1"></lgpd-cookie-consent-banner>
-</body>
+              for (var i = 0; i < cookies.length; i++) {
+                      var cookie = cookies[i];
+                      var eqPos = cookie.indexOf("=");
+                      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    }
+            }
+
+            function resetReload() {
+                    deleteAllCookies();
+                    document.location.reload();
+                  }
+    </script>
+
+    <button class="banner__action" onclick="resetReload()">
+      reset cookie and reload
+    </button>
+
+    <script src="./index.js"></script>
+    <lgpd-cookie-consent-banner style="--banner-z-index: 1"></lgpd-cookie-consent-banner>
+  </body>
 </html>

@@ -75,7 +75,7 @@ export class LgpdCookieConsentBanner extends HTMLElement {
 
     shadow.querySelector('.banner__action').addEventListener('click', () => {
       this.cookies.set(this.name, true);
-      this.innerHTML = '';
+      shadow.innerHTML = '';
     });
   }
 }
