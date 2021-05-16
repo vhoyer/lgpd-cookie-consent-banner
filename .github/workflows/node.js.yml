@@ -11,13 +11,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 14.x
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14.x
-    - run: npm run build
-    - name: Publish to master 
-      run: |
-        git add .
-        # git commit -m":package: Auto-commit to publish changes to dist/ folder"
+      - uses: actions/checkout@v2
+        with:
+          # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          persist-credentials: false
+          # otherwise, you will failed to push refs to dest repo
+          fetch-depth: 0
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+
+      - run: npm run build
+
+      - name: Commit build update
+        run: |
+          git add .
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m":package: Auto-commit to publish changes to dist/ folder"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
